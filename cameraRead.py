@@ -1,18 +1,21 @@
-import cv2
 import numpy as np
+import cv2 as cv
 
-
-cap = cv2.VideoCapture(0) #captures from webcam
+cap = cv.VideoCapture(0)
 
 while True:
     ret, frame = cap.read()
-    
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('live-color',frame)
-    cv2.imshow('gray-scale',gray)
+    if frame.type() == 1:
+        gray = frame
+    elif frame.type() == 3:
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    elif frame.type() == 4:
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+    cv.imshow('raw', frame)
+    cv.imshow('grayscale', gray)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv.waitKey(1) & 0xff == ord('q'):
         break
 
 cap.release()
-cv2.destroyAllWindows()
+cv.destroyAllWindows()
