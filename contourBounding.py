@@ -56,10 +56,7 @@ while(True):
         print(xPos, yPos)
         cv2.circle(frame, (int(x+w/2), int(y+h/2)), (int(min([w, h])/8)), (100, 100, 100), -1)
         cv2.imshow('peephole', frame)
-        if(int(y+w)>0):
-            pulse -= 1 
-        elif(int(y+w)<=0):
-            pulse += 1
+	pulse = ((pulse * 160) / (height)) + 70
         wiringpi.pwmWrite(18,pulse) 
     except AttributeError:
         print("kek")
