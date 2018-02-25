@@ -1,5 +1,22 @@
 import numpy as np
 import cv2
+import time
+import wiringpi
+ 
+# use 'GPIO naming'
+wiringpi.wiringPiSetupGpio()
+  
+# set #18 to be a PWM output
+wiringpi.pinMode(18, wiringpi.GPIO.PWM_OUTPUT)
+   
+# set the PWM mode to milliseconds stype
+wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
+    
+# divide down clock
+wiringpi.pwmSetClock(192)
+wiringpi.pwmSetRange(2000)
+     
+delay_period = 0.01
 
 xPos = 0
 yPos = 0
@@ -9,10 +26,10 @@ w = 0
 h = 0
 cap = cv2.VideoCapture(0)
 fps = 0
+pulse = 150
 while(True):
     #Start FPS timer at beginning of loop
     timer = cv2.getTickCount()
-
     # Capture frame-by-frame
     ret, frame = cap.read()
     try:
@@ -27,7 +44,7 @@ while(True):
         im2, contours, hi = cv2.findContours(frame, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
         if len(contours) != 0:
-            contours = filter(lambda x: cv2.contourArea(x) > 1000, contours)	
+            contours = list(filter(lambda x: cv2.contourArea(x) > 1000, contours))	
         if len(contours) != 0:
             cv2.drawContours(frame, contours, -1, (255, 255, 0), 1)
             c = max(contours, key = cv2.contourArea)
@@ -37,10 +54,16 @@ while(True):
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
     #Displays frame
         print(xPos, yPos)
-        cv2.circle(frame, (x+w/2, y+h/2), (min([w, h])/8), (100, 100, 100), -1)
+        cv2.circle(frame, (int(x+w/2), int(y+h/2)), (int(min([w, h])/8)), (100, 100, 100), -1)
         cv2.imshow('peephole', frame)
+        if(int(y+w)>0):
+            pulse -= 1 
+        elif(int(y+w)<=0):
+            pulse += 1
+        wiringpi.pwmWrite(18,pulse) 
     except AttributeError:
-        print("No video")
+        print("kek")
+    
     if cv2.waitKey(25) & 0xFF == ord('q'):
         break
 
