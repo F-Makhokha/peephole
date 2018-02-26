@@ -2,12 +2,12 @@ import numpy as np
 import cv2
 import time
 
-cap = cv2.VideoCapture(0)
 fps = 69
 prevMillis = 0
 height = 500
 width = 500
 print("Loading")
+cap = cv2.VideoCapture(0)
 while(True):
     # Capture frame-by-frame
     try:
