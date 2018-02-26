@@ -40,7 +40,7 @@ while(True):
 
     # Our operations on the frame come here
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = cv2.inRange(frame, (100, 0.0, 0.0), (255, 32.037, 66.67232))
+        frame = cv2.inRange(frame, (30, 0.0, 0.0), (255, 32.037, 66.67232))
         im2, contours, hi = cv2.findContours(frame, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
         if len(contours) != 0:
@@ -49,14 +49,17 @@ while(True):
             cv2.drawContours(frame, contours, -1, (255, 255, 0), 1)
             c = max(contours, key = cv2.contourArea)
             x, y, w, h = cv2.boundingRect(c)
-            xPos = x - width/2 + w/2
-            yPos = y - height/2 + h/2
+            xPos = x + w/2
+            yPos = y + h/2
+
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 255, 255), 2)
     #Displays frame
         print(xPos, yPos)
         cv2.circle(frame, (int(x+w/2), int(y+h/2)), (int(min([w, h])/8)), (100, 100, 100), -1)
+        cv2.putText(frame, "X : " + str(xPos), (50,30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
+        cv2.putText(frame, "Y : " + str(yPos), (50,50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 2)
         cv2.imshow('peephole', frame)
-	pulse = ((pulse * 160) / (height)) + 70
+        pulse = int((((yPos - 0) * 160) / (height)) + 70)
         wiringpi.pwmWrite(18,pulse) 
     except AttributeError:
         print("kek")
