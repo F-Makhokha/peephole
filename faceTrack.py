@@ -1,20 +1,6 @@
 import numpy as np
 import cv2
 import time
-import wiringpi
-
-# use 'GPIO naming'
-wiringpi.wiringPiSetupGpio()
-  
-# set #18 to be a PWM output
-wiringpi.pinMode(18, wiringpi.GPIO.PWM_OUTPUT)
-   
-# set the PWM mode to milliseconds stype
-wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
-    
-# divide down clock
-wiringpi.pwmSetClock(192)
-wiringpi.pwmSetRange(2000)
 
 def scaleToCenter(xCenter, yCenter, _height, _width):
     distanceFromCenterY = yCenter-(_height/2)
@@ -28,6 +14,9 @@ cap = cv2.VideoCapture(0)
 print('Loading')
 xCen = 0
 yCen = 0
+cordNum = 0
+xSum = 0
+ySum = 0
 
 while(True):
     try:
@@ -39,29 +28,30 @@ while(True):
         print('.')
         time.sleep(1)
         continue
+
     # Our operations on the frame come here
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Facial recodnition
     faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+    cordNum = 0
+    xSum = 0
+    ySum = 0
     for (x,y,w,h) in faces:
+        numCords += 1
         cv2.rectangle(frame, (x,y), (x+w, y+h), (0,0,255), 2)
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = frame[y:y+h, x:x+w]
         xCen = x+(w/2)
         yCen = y+(h/2)
-        cv2.circle(frame, (int(xCen), int(yCen), (int(min([w, h])/8)), (100, 100, 100), -1))
-        print(scaleToCenter(xCen, yCen, height, width))
+        xSum += xCen
+        ySum += yCen
     
     # Display the resulting frame
+    cv2.circle(frame, (int(xSum / numCords), int(ySum / numCords), (int(min([w, h])/8)), (100, 100, 100), -1))
     cv2.imshow('frame',frame)
     if cv2.waitKey(25) & 0xFF == ord('q'):
         break
     
-    #Pi stuff
-    pulse = int((((yPos - 0) * 160) / (height)) + 70)
-    wiringpi.pwmWrite(18,pulse) 
-
-
 # When everything done, release the capture
 cap.release()
 cv2.destroyAllWindows()          
