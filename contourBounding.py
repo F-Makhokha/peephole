@@ -25,7 +25,6 @@ y = 0
 w = 0
 h = 0
 cap = cv2.VideoCapture(0)
-fps = 0
 pulse = 150
 while(True):
     #Start FPS timer at beginning of loop
