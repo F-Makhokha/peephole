@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import time
-import wiringpy
+import wiringpi
 
 # use 'GPIO naming'
 wiringpi.wiringPiSetupGpio()
@@ -49,11 +49,18 @@ while(True):
         roi_color = frame[y:y+h, x:x+w]
         xCen = x+(w/2)
         yCen = y+(h/2)
+        cv2.circle(frame, (int(xCen), int(yCen), (int(min([w, h])/8)), (100, 100, 100), -1))
         print(scaleToCenter(xCen, yCen, height, width))
+    
     # Display the resulting frame
     cv2.imshow('frame',frame)
     if cv2.waitKey(25) & 0xFF == ord('q'):
         break
+    
+    #Pi stuff
+    pulse = int((((yPos - 0) * 160) / (height)) + 70)
+    wiringpi.pwmWrite(18,pulse) 
+
 
 # When everything done, release the capture
 cap.release()
