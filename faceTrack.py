@@ -2,19 +2,13 @@ import numpy as np
 import cv2
 import time
 
-def scaleToCenter(xCenter, yCenter, _height, _width):
-    distanceFromCenterY = yCenter-(_height/2)
-    distanceFromCenterX = xCenter-(_width/2)
-    return('distance from y: ', distanceFromCenterY, ' distance from x: ', distanceFromCenterX)
-
 face_cascade = cv2.CascadeClassifier('/home/pi/opencv-3.3.0/data/haarcascades/haarcascade_frontalface_default.xml')
 cap = cv2.VideoCapture(0)
-
 
 print('Loading')
 xCen = 0
 yCen = 0
-cordNum = 0
+numCords = 0
 xSum = 0
 ySum = 0
 
