@@ -33,8 +33,8 @@ while(cap.isOpened()):
 			hSum += h
 			wSum += w
 			cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
-			roi_gray = gray[y:y+h, x:x+w]
-			roi_color = img[y:y+h, x:x+w]
+			#roi_gray = gray[y:y+h, x:x+w]
+			#roi_color = img[y:y+h, x:x+w]
 			
 			cv2.circle(img, (xCenter, yCenter), int(min(w, h)/8), (0, 0, 0), -1)	
 			cv2.circle(img, (xCenter, yCenter), int((min(w, h)/8) - (min(w, h)/16)), (255, 255, 255), -1)
@@ -42,12 +42,10 @@ while(cap.isOpened()):
 		radius = int(min(wSum, hSum) / (8 * len(faces)))
 		cv2.circle(img, (int(xSum/len(faces)), int(ySum/len(faces))), radius, (255, 255, 255), -1)
 		cv2.circle(img, (int(xSum/len(faces)), int(ySum/len(faces))), radius - int(radius/4), (0, 0, 0), -1)
-
-	cv2.imshow('img',img)
+	cv2.imshow('peephole',img)
 	if cv2.waitKey(25) & 0xFF == ord('q'):
 		cap.release()
 		cv2.destroyAllWindows()
 	elapsed = time.time()
 	fps = 1/(elapsed - current)
-	print('{0:.2f}'.format(fps), ' FPS, ', len(faces), 'faces in frame')
-
+	print('{:05.2f}'.format(fps), ' FPS, ', len(faces), 'faces in frame')
